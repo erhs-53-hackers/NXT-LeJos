@@ -17,11 +17,5 @@ public class Robot {
     }
     System.out.println(" " + pilot.getMovement().getDistanceTraveled());
     Button.waitForPress();
-  }
-
-  public static void main(String[] args) {
-    Robot traveler = new Robot();
-    traveler.pilot = new DifferentialPilot(2.25f, 5.5f, Motor.A, Motor.C);
-    traveler.go();
-  }
+  }  
 }
