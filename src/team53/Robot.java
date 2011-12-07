@@ -4,20 +4,35 @@ import lejos.nxt.*;
 import lejos.nxt.ColorSensor.Color;
 import lejos.nxt.addon.ColorSensorHT;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.PIDController;
 
 /**
  * Robot that stops if it hits something before it completes its travel.
  */
 public class Robot {
 	DifferentialPilot pilot;
-	ColorSensorHT sensor;
-
+	LightSensor sensor;	 
+	int setpoint;
+	PIDController pid;
+	
 	// TouchSensor bump = new TouchSensor(SensorPort.S1);
 
-	public Robot() {
-		//sensor = new ColorSensorHT(SensorPort.S1);		
+	public Robot(int setpoint) {
+		sensor = new LightSensor(SensorPort.S1);	
+		pid = new PIDController(setpoint);
+		this.setpoint = setpoint;
+		
+		
+		pid.setPIDParam(PIDController.PID_KP, 12);
+		pid.setPIDParam(PIDController.PID_KI, 0.05f);
+		pid.setPIDParam(PIDController.PID_KD, 0.5f);
+		
+		
+		
+		
+	    
 	}
-	
+	/*
 	private team53.Color getColor() {
 		team53.Color c = null;
 		int result = 0;
@@ -54,7 +69,7 @@ public class Robot {
 		
 		return c;
 	}
-	
+	*/
 	public void turnLeft() {
 		pilot.setRotateSpeed(30);
 		pilot.rotate(90);
@@ -71,8 +86,21 @@ public class Robot {
 	
 	public void forward(double num) {
 		
-		pilot.setTravelSpeed(40);
-		pilot.travel(num);
+		int value = pid.doPID(sensor.getLightValue());		
+		
+		Motor.B.setSpeed(600 + value);
+		Motor.B.forward();
+		Motor.C.setSpeed(600 - value);
+		Motor.C.forward();
+		//System.out.println(value*-10);
+		
+		/*
+		Button.ENTER.waitForPressAndRelease();
+		while(!Button.ENTER.isPressed())
+		{
+			System.out.println(sensor.getLightValue());
+		}
+		*/
 		
 		
 	}
