@@ -13,14 +13,7 @@ public class Robot {
 		sensor = new LightSensor(SensorPort.S1);
 	}
 
-	public void calibrate(int target, int kp, int ki, int kd) {
-		pid = new PIDController(target);
-		pid.setPIDParam(PIDController.PID_KP, kp);
-		pid.setPIDParam(PIDController.PID_KI, ki);
-		pid.setPIDParam(PIDController.PID_KD, kd);
-	}
-
-	public void calibrate(int target, float kp, float ki, float kd) {
+	public void calibratePID(int target, float kp, float ki, float kd) {
 		pid = new PIDController(target);
 		pid.setPIDParam(PIDController.PID_KP, kp);
 		pid.setPIDParam(PIDController.PID_KI, ki);
