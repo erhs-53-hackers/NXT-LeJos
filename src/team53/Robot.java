@@ -1,6 +1,7 @@
 package team53;
 
 import lejos.nxt.*;
+import lejos.nxt.addon.ColorSensorHT;
 import lejos.util.PIDController;
 
 public class Robot {
@@ -26,22 +27,43 @@ public class Robot {
 		pid.setPIDParam(PIDController.PID_KD, kd);
 	}
 
-	/*
-	 * private team53.Color getColor() {
-	 * 
-	 * team53.Color c = null; int result = 0; for(int i = 0;i<50; i++) { result
-	 * += sensor.getColorID(); } result /= 50; System.out.println(result);
-	 * 
-	 * switch (sensor.getColorID()) { case 6: c = team53.Color.White; break;
-	 * case 3: c = team53.Color.Yellow; break; case 5: c = team53.Color.Red;
-	 * break; case 0: c = team53.Color.Red; break; case 2: c =
-	 * team53.Color.Blue; break; case 8: c = team53.Color.Black; break; case 1:
-	 * c = team53.Color.Green; break;
-	 * 
-	 * }
-	 * 
-	 * return c; }
-	 */
+	private team53.Color getColor(ColorSensorHT sensor) {
+
+		team53.Color c = null;
+		int result = 0;
+		for (int i = 0; i < 50; i++) {
+			result += sensor.getColorID();
+		}
+		result /= 50;
+		System.out.println(result);
+
+		switch (sensor.getColorID()) {
+		case 6:
+			c = team53.Color.White;
+			break;
+		case 3:
+			c = team53.Color.Yellow;
+			break;
+		case 5:
+			c = team53.Color.Red;
+			break;
+		case 0:
+			c = team53.Color.Red;
+			break;
+		case 2:
+			c = team53.Color.Blue;
+			break;
+		case 8:
+			c = team53.Color.Black;
+			break;
+		case 1:
+			c = team53.Color.Green;
+			break;
+
+		}
+
+		return c;
+	}
 
 	public void turnLeft() {
 
