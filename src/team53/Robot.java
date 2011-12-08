@@ -3,9 +3,6 @@ package team53;
 import lejos.nxt.*;
 import lejos.util.PIDController;
 
-/**
- * Robot that stops if it hits something before it completes its travel.
- */
 public class Robot {
 	LightSensor sensor;
 	PIDController pid;
