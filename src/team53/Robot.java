@@ -23,6 +23,9 @@ public class Robot {
 		pid.setPIDParam(PIDController.PID_KI, ki);
 		pid.setPIDParam(PIDController.PID_KD, kd);
 	}
+	public void calibratePilot(float wheelDiameter, float trackWidth) {
+		pilot = new DifferentialPilot(wheelDiameter, trackWidth, Motor.B, Motor.C);
+	}
 
 	private team53.Color getColor(ColorSensorHT sensor) {
 
