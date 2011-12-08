@@ -1,12 +1,16 @@
 package team53;
 
-import lejos.nxt.*;
+import lejos.nxt.LightSensor;
+import lejos.nxt.Motor;
+import lejos.nxt.SensorPort;
 import lejos.nxt.addon.ColorSensorHT;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.PIDController;
 
 public class Robot {
 	LightSensor sensor;
 	PIDController pid;
+	DifferentialPilot pilot;
 	int speed = 600;
 
 	public Robot() {
@@ -59,14 +63,16 @@ public class Robot {
 	}
 
 	public void turnLeft() {
-
+		pilot.rotate(-90);		
 	}
 
 	public void turnRight() {
-
+		pilot.rotate(90);
 	}
 
 	public void forward(double num) {
+		if(pilot.isMoving())
+			pilot.stop();
 		int value = pid.doPID(sensor.getLightValue());
 
 		Motor.B.setSpeed(speed + value);
