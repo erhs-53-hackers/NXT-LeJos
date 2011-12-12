@@ -22,9 +22,12 @@ public class Robot {
 		pid.setPIDParam(PIDController.PID_KP, kp);
 		pid.setPIDParam(PIDController.PID_KI, ki);
 		pid.setPIDParam(PIDController.PID_KD, kd);
+		
 	}
 	public void calibratePilot(float wheelDiameter, float trackWidth) {
 		pilot = new DifferentialPilot(wheelDiameter, trackWidth, Motor.B, Motor.C);
+		pilot.setTravelSpeed(100);
+		pilot.setRotateSpeed(100);
 	}
 
 	private team53.Color getColor(ColorSensorHT sensor) {
@@ -74,13 +77,9 @@ public class Robot {
 	}
 
 	public void forward(double num) {
-		if(pilot.isMoving())
-			pilot.stop();
 		int value = pid.doPID(sensor.getLightValue());
+		System.out.println(value);
 
-		Motor.B.setSpeed(speed + value);
-		Motor.B.forward();
-		Motor.C.setSpeed(speed - value);
-		Motor.C.forward();
+		pilot.steer(value);
 	}
 }
