@@ -7,12 +7,11 @@ public class Main {
 		Robot robot = new Robot();
 		robot.calibratePilot(2.4f, 6.8f);
 		robot.calibratePID(127, 1f, 0.005f, 0.16f);
-		
 
 		
 
 		while (!Button.ESCAPE.isPressed())
-			robot.hugLeft();
+			robot.hugRight();
 
 	}
 

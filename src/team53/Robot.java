@@ -8,13 +8,18 @@ import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.PIDController;
 
 public class Robot {
-	LightSensor sensor;
+	LightSensor lightSensor;
+	ColorSensorHT RcolorSensor;
+	ColorSensorHT LcolorSensor;
 	PIDController pid;
 	DifferentialPilot pilot;
-	int speed = 600;
+	float speed = 400;
 
 	public Robot() {
-		sensor = new LightSensor(SensorPort.S1);
+		RcolorSensor = new ColorSensorHT(SensorPort.S3);
+		LcolorSensor = new ColorSensorHT(SensorPort.S2);
+		//lightSensor = new LightSensor(SensorPort.S1);
+		
 	}
 
 	public void calibratePID(int target, float kp, float ki, float kd) {
@@ -26,8 +31,8 @@ public class Robot {
 	}
 	public void calibratePilot(float wheelDiameter, float trackWidth) {
 		pilot = new DifferentialPilot(wheelDiameter, trackWidth, Motor.B, Motor.C);
-		pilot.setTravelSpeed(100);
-		pilot.setRotateSpeed(100);
+		pilot.setTravelSpeed(25);
+		pilot.setRotateSpeed(30);
 	}
 
 	private team53.Color getColor(ColorSensorHT sensor) {
@@ -75,11 +80,60 @@ public class Robot {
 	public void turnRight() {
 		pilot.rotate(90);
 	}
+	private void checkForStop(Direction dir) {
+		if(dir == Direction.Right) {
+			if(RcolorSensor.getRGBComponent(ColorSensorHT.RED) == 255)
+			{
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			System.out.println(RcolorSensor.getRGBComponent(ColorSensorHT.RED));
+			
+		} else {
+			if(LcolorSensor.getRGBComponent(ColorSensorHT.RED) == 255)
+			{
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			System.out.println(LcolorSensor.getRGBComponent(ColorSensorHT.RED));
+		}
+	}
+	
 
-	public void forward(double num) {
-		int value = pid.doPID(sensor.getLightValue());
-		System.out.println(value);
-
-		pilot.steer(value);
+	public void hugRight() {
+		float value = pid.doPID(RcolorSensor.getRGBComponent(ColorSensorHT.BLACK));		
+		
+		//System.out.println(value);
+		
+		Motor.B.setSpeed(speed - (speed * (value/128/5)));
+		Motor.B.forward();
+		Motor.C.setSpeed(speed + (speed * (value/128/5)));
+		Motor.C.forward();	
+		
+		checkForStop(Direction.Left);
+		
+		
+	}
+	public void hugLeft() {
+	    float value = pid.doPID(LcolorSensor.getRGBComponent(ColorSensorHT.BLACK));		
+		
+		//System.out.println(value);
+		
+		Motor.B.setSpeed(speed + (speed * (value/128/5)));
+		Motor.B.forward();
+		Motor.C.setSpeed(speed - (speed * (value/128/5)));
+		Motor.C.forward();
+		
+		checkForStop(Direction.Right);
+		
+		
 	}
 }
