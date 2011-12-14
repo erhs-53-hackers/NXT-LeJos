@@ -6,12 +6,13 @@ public class Main {
 	public static void main(String[] args) {
 		Robot robot = new Robot();
 		robot.calibratePilot(2.4f, 6.8f);
-		robot.calibratePID(44, 12f, 0.05f, 0.5f);
+		robot.calibratePID(127, 1f, 0.005f, 0.16f);
+		
 
-		Button.ENTER.waitForPressAndRelease();
+		
 
-		while (!Button.ENTER.isPressed())
-			robot.forward(10);
+		while (!Button.ESCAPE.isPressed())
+			robot.hugLeft();
 
 	}
 
