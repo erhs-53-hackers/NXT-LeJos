@@ -14,21 +14,36 @@ public class Robot {
 	PIDController pid;
 	DifferentialPilot pilot;
 	float speed = 400;
+	int targetRed, targetWhite, targetYellow, red, yellow, white, currentColor;
 
 	public Robot() {
-		RcolorSensor = new ColorSensorHT(SensorPort.S3);
+		RcolorSensor = new ColorSensorHT(SensorPort.S1);
 		LcolorSensor = new ColorSensorHT(SensorPort.S2);
 		//lightSensor = new LightSensor(SensorPort.S1);
 		
 	}
 
-	public void calibratePID(int target, float kp, float ki, float kd) {
-		pid = new PIDController(target);
+	public void calibratePID(float kp, float ki, float kd) {
 		pid.setPIDParam(PIDController.PID_KP, kp);
 		pid.setPIDParam(PIDController.PID_KI, ki);
 		pid.setPIDParam(PIDController.PID_KD, kd);
 		
 	}
+	public void calibrateTargetColors(int white, int red, int yellow) {
+		this.targetRed = red;
+		this.targetYellow = yellow;
+		this.targetWhite = white;
+	}
+	public void calibrateColors(int white, int red, int yellow) {
+		this.white = white;
+		this.red = red;
+		this.yellow = yellow;
+	}
+	public void setColor(int color) {
+		currentColor = color;
+		pid = new PIDController(color);
+	}
+		
 	public void calibratePilot(float wheelDiameter, float trackWidth) {
 		pilot = new DifferentialPilot(wheelDiameter, trackWidth, Motor.B, Motor.C);
 		pilot.setTravelSpeed(25);
@@ -80,9 +95,9 @@ public class Robot {
 	public void turnRight() {
 		pilot.rotate(90);
 	}
-	private void checkForStop(Direction dir) {
+	void checkForStop(Direction dir) {
 		if(dir == Direction.Right) {
-			if(RcolorSensor.getRGBComponent(ColorSensorHT.RED) == 255)
+			if(RcolorSensor.getRGBComponent(ColorSensorHT.RED) - 255 < 10)
 			{
 				try {
 					Thread.sleep(5000);
@@ -94,7 +109,7 @@ public class Robot {
 			System.out.println(RcolorSensor.getRGBComponent(ColorSensorHT.RED));
 			
 		} else {
-			if(LcolorSensor.getRGBComponent(ColorSensorHT.RED) == 255)
+			if(LcolorSensor.getRGBComponent(ColorSensorHT.RED) - 255 < 10)
 			{
 				try {
 					Thread.sleep(5000);
@@ -107,8 +122,29 @@ public class Robot {
 		}
 	}
 	
+	private void checkColor() {
+		if(RcolorSensor.getRGBComponent(ColorSensorHT.BLACK) - targetYellow < 4) {
+			if(currentColor != targetYellow) {
+				//setColor(targetYellow);
+			}
+			
+			System.out.println("Yellow:");			
+		}
+		else if(RcolorSensor.getRGBComponent(ColorSensorHT.BLACK) - targetWhite < 4) {
+			if(currentColor != targetWhite) {
+				//setColor(targetWhite);
+			}
+			
+			System.out.println("White");
+		} else {
+			System.out.println("No color!!");
+		}
+	}
+	
 
 	public void hugRight() {
+		checkColor();
+		
 		float value = pid.doPID(RcolorSensor.getRGBComponent(ColorSensorHT.BLACK));		
 		
 		//System.out.println(value);
@@ -118,7 +154,7 @@ public class Robot {
 		Motor.C.setSpeed(speed + (speed * (value/128/5)));
 		Motor.C.forward();	
 		
-		checkForStop(Direction.Left);
+		//checkForStop(Direction.Left);
 		
 		
 	}
@@ -132,7 +168,7 @@ public class Robot {
 		Motor.C.setSpeed(speed - (speed * (value/128/5)));
 		Motor.C.forward();
 		
-		checkForStop(Direction.Right);
+		//checkForStop(Direction.Right);
 		
 		
 	}
